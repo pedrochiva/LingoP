@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Monte a Frase — Inglês | LinguaFlow</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8629001585428789"
+     crossorigin="anonymous"></script>
+  
+<style>
+:root{--accent:#2648b6;--bg:#f6f8ff;--card:#fff;--muted:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,#f6f8ff,#fff)}
+.wrap{max-width:960px;margin:18px auto;padding:14px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.header h1{color:var(--accent);margin:0}
+.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(10,20,60,0.05);margin-top:12px}
+.pool{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#f1f5ff;border-radius:10px;min-height:80px}
+.word{padding:10px 14px;border-radius:10px;background:var(--accent);color:#fff;cursor:grab;user-select:none}
+.canvas{min-height:70px;padding:12px;border-radius:10px;background:#f8fafc;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.controls{display:flex;gap:8px;margin-top:12px}
+.btn{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
+.small{color:var(--muted);font-size:13px}
+
+.hint{font-size:14px;color:#333;margin-bottom:8px}
+.feedback{margin-top:10px;font-weight:700}
+
+@media(max-width:640px){.pool{min-height:120px}}
+.link {
+  color:#2648b6;
+  text-decoration:none;
+  padding-top:50px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Monte a Frase — Inglês</h1>
+    <div class="small">Pontuação: <span id="score">0</span> • Melhor: <span id="best">0</span></div>
+  </div>
+  <a class="link" href="../jogos.html">⬅ Voltar</a>
+
+  <div class="card">
+    <div class="hint">Dica: Clique nas palavras ou arraste-as para formar a frase correta.</div>
+    <div class="pool" id="pool" aria-label="palavras disponíveis"></div>
+
+    <div class="small" style="margin-top:10px">Sua frase:</div>
+    <div class="canvas" id="canvas" aria-label="área de montagem"></div>
+
+    <div class="controls">
+      <button class="btn" id="check">Verificar</button>
+      <button class="btn" id="shuffle">Embaralhar</button>
+      <button class="btn" id="next">Próxima</button>
+      <button class="btn" id="clear">Limpar</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<script>
+/* Monte a Frase com drag & click, rounds, pontos e animação */
+const data = [
+  {s:"Where are you from ?", hint:"Pergunte de onde alguém é"},
+  {s:"I love learning English .", hint:"Expressa gosto por estudar"},
+  {s:"Can I have a glass of water ?", hint:"Pedido educado por água"},
+  {s:"This is my favorite book .", hint:"Falar do objeto preferido"},
+  {s:"She speaks very well .", hint:"Elogio sobre habilidade"}
+];
+
+let idx = Number(localStorage.getItem('lf_montar_idx')||0);
+let score = Number(localStorage.getItem('lf_montar_score')||0);
+let best = Number(localStorage.getItem('lf_montar_best')||0);
+
+const pool = document.getElementById('pool'), canvas = document.getElementById('canvas'), feedback = document.getElementById('feedback');
+document.getElementById('score').textContent = score; document.getElementById('best').textContent = best;
+
+function render(){
+  feedback.textContent = '';
+  canvas.innerHTML = '';
+  pool.innerHTML = '';
+  const item = data[idx];
+  const words = item.s.split(' ');
+  const shuffled = words.slice().sort(()=>Math.random()-0.5);
+  shuffled.forEach((w,i)=>{
+    const span = document.createElement('span');
+    span.className='word';
+    span.draggable=true;
+    span.textContent = w;
+    span.id = 'w'+i;
+    span.onclick = ()=>transfer(span);
+    span.addEventListener('dragstart', e=>e.dataTransfer.setData('text', e.target.id));
+    pool.appendChild(span);
+  });
+}
+
+function transfer(el){
+  canvas.appendChild(el);
+}
+
+canvas.addEventListener('dragover', e=>e.preventDefault());
+canvas.addEventListener('drop', e=>{
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text');
+  const el = document.getElementById(id);
+  if(el) canvas.appendChild(el);
+});
+
+document.getElementById('check').addEventListener('click', ()=>{
+  const formed = Array.from(canvas.children).map(n=>n.textContent).join(' ');
+  const correct = data[idx].s.trim();
+  if(formed.trim() === correct){
+    feedback.textContent = '✔ Frase correta! +15 pts';
+    score += 15; document.getElementById('score').textContent = score;
+    if(score>best){ best = score; document.getElementById('best').textContent = best; localStorage.setItem('lf_montar_best',best); }
+    localStorage.setItem('lf_montar_score',score);
+    // next after short delay
+    setTimeout(()=>{ idx = (idx+1)%data.length; localStorage.setItem('lf_montar_idx',idx); render(); },800);
+  } else {
+    feedback.textContent = '❌ Frase incorreta. Verifique a ordem.';
+    // small shake
+    canvas.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:300});
+  }
+});
+
+document.getElementById('shuffle').addEventListener('click', render);
+document.getElementById('next').addEventListener('click', ()=>{ idx=(idx+1)%data.length; localStorage.setItem('lf_montar_idx',idx); render(); });
+document.getElementById('clear').addEventListener('click', ()=>{ // move all back to pool
+  Array.from(canvas.children).forEach(n=>pool.appendChild(n));
+  feedback.textContent='';
+});
+
+render();
+</script>
+</body>
+</html>

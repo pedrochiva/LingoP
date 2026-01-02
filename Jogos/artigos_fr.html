@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"/><meta name="viewport"content="width=device-width,initial-scale=1"/><title>Artigos — Francês</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png">
+  
+<style>
+body{font-family:Inter,Arial;margin:0;background:#f7fbff;color:#071133}
+
+.wrap{max-width:720px;margin:18px auto;padding:16px}.card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+
+.btn{padding:10px 12px;border-radius:8px;background:#2648b6;color:#fff;border:0;cursor:pointer;margin-top:8px}
+
+.choice{padding:10px;border-radius:8px;background:#f1f6ff;margin-top:8px;cursor:pointer}.info{color:#6b7280}
+
+.link{color:#2648b6;text-decoration:none}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="link" href="../jogos.html">⬅ Voltar</a>
+  <div class="card">
+    <h2 style="color:#2648b6">Artigos — Francês</h2>
+    <div id="sentence" style="font-size:18px">Carregando...</div>
+    <div id="choices"></div>
+    <div style="margin-top:10px" class="info">Pontuação: <span id="score">0</span></div>
+  </div>
+</div>
+<script>
+const items=[{s:'___ voiture est rouge.', a:'la'},{s:'J’ai ___ livre.', a:'un'},{s:'___ enfants jouent.', a:'les'},{s:'Elle a ___ pomme.', a:'une'},{s:'___pedro.',a:'le'}];
+
+let idx=0, score=0; const sentence=document.getElementById('sentence'), choices=document.getElementById('choices'), scoreEl=document.getElementById('score');
+
+function render(){ const it=items[idx]; sentence.textContent = it.s.replace('___','_____'); choices.innerHTML=''; ['le','la','les','un','une','des'].sort(()=>Math.random()-0.5).forEach(o=>{ const d=document.createElement('div'); d.className='choice'; d.textContent=o; d.onclick=(()=>select(d,it.a)); choices.appendChild(d); }); }
+
+function select(el,correct){ Array.from(choices.children).forEach(c=>c.onclick=null); if(el.textContent===correct){ el.style.background='#16a34a'; el.style.color='#fff'; score+=10; } else { el.style.background='#ef4444'; el.style.color='#fff'; Array.from(choices.children).forEach(c=>{ if(c.textContent===correct){ c.style.background='#16a34a'; c.style.color='#fff'; }}); } scoreEl.textContent=score;
+
+localStorage.setItem('lf_artigos', JSON.stringify({best: Math.max(score, (JSON.parse(localStorage.getItem('lf_artigos')||'null')||{best:0}).best||0), last: score})); setTimeout(()=>{ idx=(idx+1)%items.length; render(); },900); }
+render();
+</script>
+</body>
+</html>

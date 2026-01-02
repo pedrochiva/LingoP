@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Quiz Inglês | LinguaFlow</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8629001585428789"
+     crossorigin="anonymous"></script>
+  
+<style>
+:root{--accent:#2648b6;--bg:#f6f8ff}
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,#f6f8ff,#fff)}
+.container{max-width:900px;margin:18px auto;padding:14px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.header h1{color:var(--accent);margin:0}
+.card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(10,20,60,0.05);margin-top:12px}
+.q{font-size:20px}
+.choices{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.choice{padding:12px;border-radius:10px;border:1px solid rgba(38,72,182,0.08);cursor:pointer;background:#f7fbff;font-weight:700}
+.choice.correct{background:#16a34a;color:#fff}
+.choice.wrong{background:#ef4444;color:#fff}
+.stat{display:flex;gap:10px;align-items:center;margin-top:12px}
+.btn{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+
+.small{color:#6b7280;font-size:13px}
+
+.rank{margin-top:12px}
+.link {
+  color:#2648b6;
+  text-decoration:none;
+  padding:12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Quiz Inglês</h1>
+    <div class="small">Pontuação: <span id="score">0</span></div>
+  </div>
+  <a class="link" href="../jogos.html">⬅ Voltar</a>
+  <div class="card">
+    <div class="q" id="qText">Carregando...</div>
+    <div class="choices" id="choices"></div>
+    <div class="stat">
+      <div class="small">Round <span id="rIndex">1</span>/<span id="rTotal">30</span></div>
+      <div style="flex:1"></div>
+      <div><button class="btn" id="next">Pular</button></div>
+    </div>
+    <div class="rank small" id="rank"></div>
+  </div>
+</div>
+
+<script>
+/* 30 perguntas - mistura de vocabulário, frases e listening (texto) */
+const qdata = [
+  {q:'How do you say "casa" in English?', opts:['house','car','way','home'], a:'house'},
+  {q:'Choose the correct past of "go".', opts:['goed','went','gone','goes'], a:'went'},
+  {q:'Select the synonym of "happy".', opts:['sad','glad','angry','tall'], a:'glad'},
+  {q:'I ___ a book now (fill).', opts:['read','reads','am reading','reading'], a:'am reading'},
+  {q:'She has ___ apples.', opts:['many','much','a','an'], a:'many'},
+  {q:'Which is correct: "I have been" meaning?', opts:['evento passado','estado contínuo','presente perfeito','futuro'], a:'presente perfeito'},
+  {q:'Choose translation: "Eu preciso de água".', opts:['I need water','I need a water','I have water','I need the water'], a:'I need water'},
+  {q:'Pick the correct article: ___ apple (countable) ', opts:['a','an','the','none'], a:'an'},
+  {q:'What is the opposite of "big"?', opts:['small','tall','huge','wide'], a:'small'},
+  {q:'Which is a question: "Where ___ you from?"', opts:['are','is','do','did'], a:'are'},
+  // add to reach 30 questions...
+];
+
+while(qdata.length<30){
+  qdata.push(...qdata.slice(0,6)); // repeat to reach >=30, can be expanded later
+}
+qdata.length = 30;
+
+let order = qdata.map((_,i)=>i).sort(()=>Math.random()-0.5);
+let index = 0;
+let score = Number(localStorage.getItem('lf_quiz_en_score')||0);
+
+const qText = document.getElementById('qText'), choices = document.getElementById('choices'), rIndex = document.getElementById('rIndex'), rTotal = document.getElementById('rTotal'), scoreEl = document.getElementById('score'), rankEl = document.getElementById('rank');
+rTotal.textContent = order.length; scoreEl.textContent = score;
+
+function render(){
+  const item = qdata[order[index]];
+  qText.textContent = item.q;
+  choices.innerHTML = '';
+  const opts = item.opts.slice().sort(()=>Math.random()-0.5);
+  opts.forEach(o=>{
+    const b = document.createElement('div'); b.className='choice'; b.textContent = o;
+    b.onclick = ()=>select(b,item.a);
+    choices.appendChild(b);
+  });
+  rIndex.textContent = index+1;
+}
+function select(el, correct){
+  disable();
+  if(el.textContent === correct){
+    el.classList.add('correct'); score += 10; scoreEl.textContent = score;
+    showRank();
+    speak('Correct','en-US');
+  } else {
+    el.classList.add('wrong');
+    // highlight correct
+    Array.from(document.querySelectorAll('.choice')).forEach(c=>{ if(c.textContent===correct) c.classList.add('correct'); });
+    speak(correct,'en-US');
+  }
+  setTimeout(()=>{ index++; if(index>=order.length){ finish(); } else { render(); } },900);
+}
+function disable(){ Array.from(document.querySelectorAll('.choice')).forEach(c=>c.onclick=null); }
+document.getElementById('next').addEventListener('click',()=>{ index++; if(index>=order.length) finish(); else render(); });
+
+function finish(){
+  alert('Quiz finalizado! Pontos: '+score);
+  const best = Number(localStorage.getItem('lf_quiz_en_best')||0);
+  if(score>best){ localStorage.setItem('lf_quiz_en_best',score); alert('Novo record!'); }
+  localStorage.setItem('lf_quiz_en_score',score);
+  index=0; order = order.sort(()=>Math.random()-0.5); score=0; scoreEl.textContent=score; render();
+}
+
+function showRank(){
+  const best = Number(localStorage.getItem('lf_quiz_en_best')||0);
+  rankEl.textContent = 'Melhor: ' + best + ' pts';
+}
+
+function speak(t,lang='en-US'){ try{ const u=new SpeechSynthesisUtterance(t); u.lang=lang; window.speechSynthesis.speak(u);}catch(e){} }
+
+render(); showRank();
+</script>
+</body>
+</html>

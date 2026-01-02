@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <title>Tradutor — LingoPlay</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png ">
+  <link rel="stylesheet" href="assets/style.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8629001585428789"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="header">
+    <div class="brand">
+ <img src="https://i.ibb.co/rGpqSw3T/1-Polish-20251223-102251984-1.png" alt="1-Polish-20251223-102251984-1" border="0" class="logo" />
+      <div>
+        <h1>Tradutor LingoPlay</h1>
+        <div class="small">EN ⇄ PT ⇄ FR — rápido e prático</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="btn" href="index.html">Home</a>
+      <a class="btn" href="ebooks.html">Ebooks</a>
+      <a class="btn" href="conteudo.html">Conteúdo</a>
+      <a class="btn" href="jogos.html">Jogos</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="page-intro">
+  O tradutor do LingoPlay permite traduzir textos entre inglês,
+  francês e português de forma rápida e simples.
+</p>
+    <section class="translate-box">
+      <h3 class="section-title">Tradutor online</h3>
+
+      <form id="translate-form">
+        <textarea id="translate-text" class="input" rows="4"
+          placeholder="Escreva ou cole o texto aqui"></textarea>
+
+        <div class="lang-row" style="margin-top:8px">
+          <select id="translate-from" class="input">
+            <option value="auto">Detectar idioma</option>
+            <option value="en">Inglês</option>
+            <option value="pt">Português</option>
+            <option value="fr">Francês</option>
+          </select>
+
+          <select id="translate-to" class="input">
+            <option value="pt">Português</option>
+            <option value="en">Inglês</option>
+            <option value="fr">Francês</option>
+          </select>
+
+          <button class="primary" type="submit">Traduzir</button>
+          <button type="button" class="secondary"
+            onclick="clearTranslate()">Limpar</button>
+        </div>
+      </form>
+
+      <div id="translate-result" class="result small"
+        style="min-height:60px;margin-top:12px">
+        Aqui aparecerá a tradução
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="pronounce-btn" style="background: var(--accent);" onclick="copyTranslation(this)">
+          Copiar Tradução
+        </button>
+        <br><br>
+        
+        <button class="pronounce-btn"
+          onclick="pronounceText(document.getElementById('translate-result').textContent,'en')">
+          Ouvir (EN)
+        </button>
+        <button class="pronounce-btn"
+          onclick="pronounceText(document.getElementById('translate-result').textContent,'fr')">
+          Ouvir (FR)
+        </button>
+        <button class="pronounce-btn"
+          onclick="pronounceText(document.getElementById('translate-result').textContent,'pt')">
+          Ouvir (PT)
+        </button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <div class="tagline">LingoPlay</div>
+      <div class="small">Ensinar inglês e francês com método prático.</div>
+    </div>
+    
+    <div>
+      <a href="sobre.html">Sobre</a> |
+      <a href="politica.html">Política de Privacidade</a> |
+      <a href="termos.html">Termos de Uso</a> |
+      <a href="contato.html">Contato</a>
+    </div>
+    <div>
+      <div class="small">Contato: <a href="mailto:lingoplay7@gmail.com">lingoplay7@gmail.com</a></div>
+      <div class="small">© LingoPlay — Todos os direitos</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const form = document.getElementById('translate-form');
+const result = document.getElementById('translate-result');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = document.getElementById('translate-text').value.trim();
+  const from = document.getElementById('translate-from').value;
+  const to = document.getElementById('translate-to').value;
+
+  if (!text) {
+    result.textContent = 'Escreva algo para traduzir.';
+    return;
+  }
+
+  result.textContent = 'Traduzindo...';
+
+  try {
+    // Nova API do Google (gtx) - Muito mais precisa para palavras curtas como "oi"
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+    
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // O Google retorna um array aninhado, pegamos a primeira parte
+    if (data && data[0] && data[0][0] && data[0][0][0]) {
+      result.textContent = data[0][0][0];
+    } else {
+      result.textContent = 'Erro ao processar tradução.';
+    }
+  } catch (err) {
+    console.error(err);
+    result.textContent = 'Falha na conexão com o tradutor.';
+  }
+});
+
+function clearTranslate() {
+  document.getElementById('translate-text').value = '';
+  result.textContent = 'Aqui aparecerá a tradução';
+}
+
+async function copyTranslation(btn) {
+  const text = result.textContent;
+  if (!text || text === 'Aqui aparecerá a tradução' || text === 'Traduzindo...') return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    const originalText = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.style.background = '#17a673';
+    
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = 'var(--accent)';
+    }, 2000);
+  } catch (err) {
+    alert('Erro ao copiar.');
+  }
+}
+
+function pronounceText(text, lang) {
+  if (!text || text === 'Aqui aparecerá a tradução' || text === 'Traduzindo...') return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  window.speechSynthesis.speak(utterance);
+}
+</script>
+
+</body>
+</html>

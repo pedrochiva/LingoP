@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="index, follow">
+  <meta name="description" content="LingoPlay é uma plataforma educativa com conteúdos, jogos, ebooks e tradutor para aprender inglês e francês de forma simples e prática.">
+  <title>LingoPlay — Aprenda Inglês e Francês</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png ">
+  <link rel="stylesheet" href="assets/style.css">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8629001585428789"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="brand">
+        <img src="https://i.ibb.co/rGpqSw3T/1-Polish-20251223-102251984-1.png" alt="1-Polish-20251223-102251984-1" border="0" class="logo" />
+        <div>
+          <h1>LingoPlay</h1>
+          <div class="small">Inglês • Français — Aprenda com prática e pronúncia</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="jogos.html">Jogos</a>
+        <a class="btn" href="conteudo.html">Conteúdo</a>
+        <a class="btn" href="tradutor.html">Tradutor</a>
+        <a class="btn" href="ebooks.html">Ebooks</a>
+      </nav>
+      Deslize para esquerda
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="left">
+          <h2>Fale com confiança. Aprenda com método.</h2>
+          <p class="lead">Do zero ao nível funcional: materiais práticos para pronúncia, frases prontas e métodos que realmente funcionam.</p>
+          <div class="cta-row">
+            <a class="primary" href="ebooks.html">Ver Ebooks</a>
+            <a class="secondary" href="tradutor.html">Testar o Tradutor</a>
+          </div>
+
+          <div style="margin-top:18px">
+            <h3 class="section-title">Frase do dia</h3>
+            <div id="frdia" class="card small">
+              <div id="phrase-of-day">Carregando...</div>
+              <div style="margin-top:8px">
+                <button class="pronounce-btn" onclick="pronounceText(document.getElementById('phrase-of-day').textContent,'en')">Ouvir (EN)</button>
+                  <button class="pronounce-btn" onclick="pronounceText(document.getElementById('phrase-of-day'). textContent,'fr')">Ouvir (FR)</button>
+                  <button class="pronounce-btn" 
+                  onclick="pronounceText(document.getElementById('phrase-of-day'). textContent,'pt')">Ouvir (PT)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div style="padding:10px">
+            <div class="badge">Grátis</div>
+            <h3 style="margin:8px 0">Aprenda inglês do zero</h3>
+            <p class="small">Ebook para aprender inglês. Ideal para quem está começando.</p>
+            <div style="margin-top:10px">
+              <a class="primary" href="ebooks.html#ze" style="display:inline-block">Baixa</a>
+            </div>
+          </div>
+
+          <div style="margin-top:14px" class="feature">
+            <h4>Conteúdo</h4>
+            <p class="small">Aprenda inglês e francês, aqui , lendo nossos artigos.</p>
+            <div style=margin-top:10px;>
+              <br>
+              <a class="primary" href="conteudo.html">Acessa</a>
+              <br>
+              <br>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section style="margin-top:18px">
+        <h3 class="section-title">Nossos ebooks</h3>
+        <div class="card-grid">
+          <article class="card">
+         <img src="https://i.ibb.co/d4gyp5Vt/1franc-z-1.png" alt="1franc-z-1" border="0" class="cover"/>
+            <div class="info">
+              <h3>Francês do zero guia prático para iniciantes</h3>
+              <p class="small">Aprenda francês de forma simples eficaz em 30 dias — inclui planilha.</p>
+              <div class="p-bullets">
+                <div class="pill">PDF</div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+                
+                <div class="price"></div>
+                
+                <a class="primary" href="https://github.com/user-attachments/files/24328397/Frances-do-Zero-Guia-Pratico-para-Iniciantes.pdf " style="text-decoration:none">Baixa</a>
+              </div>
+            </div>
+          </article>
+
+          <article  style="display:none;class="card">
+            <img src="images/mont.jpg" alt="Pronúncia" class="cover">
+            <div class="info">
+              <h3>Domine a Pronúncia & Monte Frases — LingoPlay</h3>
+              <p class="small">60–80 páginas focadas em pronúncia e formação de frases + QR code para áudios.</p>
+              <div class="p-bullets">
+                <div class="pill">PDF</div><div class="pill">Áudios</div><div class="pill">Exercícios</div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+                <div class="price">R$39</div>
+                <a class="primary" href="ebooks.html#ebook-pron" style="text-decoration:none">Comprar</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section style="margin-top:18px">
+        <h3 class="section-title">Aprenda se divertindo</h3>
+        <div class="featur">
+          <div class="tet" class="feature">
+            <h4>Quiz rápido</h4>
+            <div class="quiz">
+              <div><strong>Como se diz "Eu preciso de água" em inglês?</strong></div>
+              <form style="margin-top:8px">
+                <label><input type="radio" name="q1" value="a"> I need a water</label><br>
+                <label><input type="radio" name="q1" value="b"> I need water</label><br>
+                <label><input type="radio" name="q1" value="c"> Me need water</label>
+              </form>
+              <div style="margin-top:8px">
+                <button id="quiz-check" class="primary">Ver resposta</button>
+                <div id="quiz-result" style="margin-top:8px"></div>
+                <a id="g" href="jogos.html">Joga mais</a>
+              </div>
+            </div>
+          </div>
+          <br>
+          <h4>Ultimos artigos</h4>
+          <br>
+          <!--###############-->
+          <article class="feature">
+            <h3>5 Erros Comuns ao Aprender Inglês</h3>
+  
+            <div class="materia-wrapper">
+            <div class="materia-scroll" id="cont">
+            <ul>
+              <li><strong>1. Tentar traduzir tudo palavra por palavra.</strong>
+              <p>Inglês não funciona como português — frases têm ordem diferente.</p>
+            </li>
+        
+            <li><strong>2. Medo de pronunciar errado.</strong> 
+          <p>A pronúncia só melhora com prática.</li>
+        
+          <li><strong>3. Decorar palavras isoladas.</strong>
+          <p>O certo é aprender frases completas.</p></li>
+        
+          <li><strong>4. Estudar 1 vez por semana.</strong>
+          <p>O segredo é constância, não quantidade.</p>
+          </li>
+        
+          <li><strong>5. Ignorar escuta (listening).</strong>
+          <p>O ouvido precisa ser treinado todos os dias.</p></li>
+        
+             </ul>
+            </div>
+             <div class="gradiente-sumico"></div>
+            </div>
+  
+          <div class="sumico-footer">
+              <p class="small">Explicamos cada erro com exemplos fáceis de praticar.</p>
+              <a style="color='red" href="conteudo.html" class="small">Ler mais →</a>
+            </div>
+          </article>
+          <!--###############-->
+          <br>
+          
+          <h3 class=section-title>Videos</h3>
+          <br>
+          <p>deslize para esquerda</p>
+          <br>
+          
+          <div class="vd">
+                <div class="feature">
+              <h4>Vídeos</h4>
+              <div id="tik">
+               <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@lingoplay1/video/7578620916230393096" data-video-id="757862091230393096"style="max-w6/idth:20   0 px;min-width:200px;" > <section> <a target="_blank" title="@lingoplay1" href="https://www.tiktok.com/@lingoplay1?refer=embed">@lingoplay1</a> Artigos definido e indefinido em inglês <a title="angola🇦🇴portugal🇵🇹brasil🇧🇷" target="_blank" href="https://www.tiktok.com/tag/angola%F0%9F%87%A6%F0%9F%87%B4portugal%F0%9F%87%B5%F0%9F%87%B9brasil%F0%9F%87%A7%F0%9F%87%B7?refer=embed">#angola🇦🇴portugal🇵🇹brasil🇧🇷</a> <a title="ingles" target="_blank" href="https://www.tiktok.com/tag/ingles?refer=embed">#ingles</a> <a title="aprenderidiomas" target="_blank" href="https://www.tiktok.com/tag/aprenderidiomas?refer=embed">#aprenderidiomas</a> <a title="reels" target="_blank" href="https://www.tiktok.com/tag/reels?refer=embed">#reels</a> <a target="_blank" title="♬ som original - LingoPlay" href="https://www.tiktok.com/music/som-original-7578620961923779336?refer=embed">♬ som original - LingoPlay</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+              
+              </div>
+            
+            </div>
+            <div class="feature">
+              <h4>Vídeos</h4>
+              <div id="tik">
+               
+              
+              </div>
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@lingoplay1/video/7576667726475742482" data-video-id="7576667726475742482" style="max-width: 200px;min-width: 205px;" > <section> <a target="_blank" title="@lingoplay1" href="https://www.tiktok.com/@lingoplay1?refer=embed">@lingoplay1</a> <a title="brasil🇧🇷" target="_blank" href="https://www.tiktok.com/tag/brasil%F0%9F%87%A7%F0%9F%87%B7?refer=embed">#brasil🇧🇷</a> <a title="reels" target="_blank" href="https://www.tiktok.com/tag/reels?refer=embed">#reels</a> <a title="aprenderidiomas" target="_blank" href="https://www.tiktok.com/tag/aprenderidiomas?refer=embed">#aprenderidiomas</a> <a title="france🇫🇷" target="_blank" href="https://www.tiktok.com/tag/france%F0%9F%87%AB%F0%9F%87%B7?refer=embed">#france🇫🇷</a> <a title="angola🇦🇴portugal🇵🇹brasil🇧🇷" target="_blank" href="https://www.tiktok.com/tag/angola%F0%9F%87%A6%F0%9F%87%B4portugal%F0%9F%87%B5%F0%9F%87%B9brasil%F0%9F%87%A7%F0%9F%87%B7?refer=embed">#angola🇦🇴portugal🇵🇹brasil🇧🇷</a> <a target="_blank" title="♬ som original - LingoPlay" href="https://www.tiktok.com/music/som-original-7576667754226912018?refer=embed">♬ som original - LingoPlay</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+              </div>
+            <div class="feature">
+              <h4>video</h4>
+              <div id="tik">
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@lingoplay1/video/7575245159105891591" data-video-id="7575245159105891591" style="max-width: 200px;min-width: 200px;" > <section> <a target="_blank" title="@lingoplay1" href="https://www.tiktok.com/@lingoplay1?refer=embed">@lingoplay1</a> <a title="ingles" target="_blank" href="https://www.tiktok.com/tag/ingles?refer=embed">#ingles</a>  <a title="brasil🇧🇷" target="_blank" href="https://www.tiktok.com/tag/brasil%F0%9F%87%A7%F0%9F%87%B7?refer=embed">#brasil🇧🇷</a> <a title="reels" target="_blank" href="https://www.tiktok.com/tag/reels?refer=embed">#reels</a> <a target="_blank" title="♬ som original - LingoPlay" href="https://www.tiktok.com/music/som-original-7575245181386033937?refer=embed">♬ som original - LingoPlay</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+              </div>
+              
+            </div>
+          </div>
+          </div>
+        </div>
+      </section>
+      <section class="feature">
+        <h4>Segue as nossas redes sociais</h4>
+        
+        <a class="redes" href="https://www.facebook.com/profile.php?id=61584179715604&mibextid=ZbWKwL"><img src="https://i.ibb.co/zhM5nntp/1fb-1.png" alt="1fb-1" border="0" class="rede" /></a>
+        
+        <a class="redes" href="https://www.youtube.com/@lingo-play">
+          <img src="https://i.ibb.co/4nhPZhC0/1yt-1.png" alt="1yt-1" border="0" class="rede" /></a>
+        
+        <a class="redes" href="tiktok.com/@lingoplay1"> 
+     <img src="https://i.ibb.co/bngDc4M/1tik-1.png" alt="1tik-1" border="0" class="rede" /></a>
+        
+        <p style="font-size:12px;">Clicque na logo na rede que quiseres seguir</p>
+      </section>
+    </main>
+
+  
+  </div>
+  <footer class="footer">
+      <div>
+        <div class="tagline">LingoPlay</div>
+        <div class="small">Ensinar inglês e francês com método prático.</div>
+      </div>
+      
+  <div>
+    <a href="sobre.html">Sobre</a> |
+    <a href="politica.html">Política de Privacidade</a> |
+    <a href="termos.html">Termos de Uso</a> |
+    <a href="contato.html">Contato</a>
+  </div>
+      <div>
+        <div class="small">Contato: <a href="mailto:lingoplay7@gmail.com">lingoplay7@gmail.com</a></div>
+        <div class="small">© LingoPlay — Todos os direitos</div>
+      </div>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

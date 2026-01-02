@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Complete a Frase — Inglês | LinguaFlow</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8629001585428789"
+     crossorigin="anonymous"></script>
+  
+<style>
+:root{--accent:#2648b6;--bg:#f6f8ff;--card:#fff;--muted:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,#f6f8ff,#ffffff);color:#071133}
+.app{max-width:920px;margin:18px auto;padding:16px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.brand h1{color:var(--accent);margin:0;font-size:20px}
+.card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 12px 30px rgba(10,20,60,0.06)}
+.row{display:flex;gap:12px;align-items:center}
+.question{font-size:20px;margin:12px 0}
+.options{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.opt{padding:10px 14px;border-radius:10px;border:1px solid rgba(38,72,182,0.08);background:#f7fbff;cursor:pointer;font-weight:700;transition:transform .12s,box-shadow .12s}
+.opt:hover{transform:translateY(-4px)}
+.opt.correct{background:#16a34a;color:#fff;border:0}
+.opt.wrong{background:#ef4444;color:#fff;border:0;opacity:0.95}
+.controls{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+.ghost{background:transparent;border:1px solid rgba(38,72,182,0.12);color:var(--accent)}
+.small{color:var(--muted);font-size:13px}
+.statbar{display:flex;align-items:center;gap:10px;margin-top:12px}
+.progress{height:10px;background:#eef4ff;border-radius:999px;overflow:hidden;flex:1}
+.fill{height:100%;background:var(--accent);width:0%;transition:width .4s}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:rgba(2,6,23,0.9);color:white;padding:10px 14px;border-radius:10px;display:none}
+@media(max-width:640px){.row{flex-direction:column;align-items:flex-start}}
+.link {
+  color:#2648b6;
+  text-decoration:none;
+  padding:10px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <h1>Complete a Frase — Inglês</h1>
+      <div class="small">Treine gramática e vocabulário — rounds e streak</div>
+    </div>
+    <div class="small">Streak: <span id="streak">0</span> • Pontos: <span id="score">0</span></div>
+  </div>
+  <a class="link" href="../jogos.html">⬅ Voltar</a>
+  <div class="card" id="game">
+    <div class="question" id="qText">Carregando...</div>
+
+    <div class="row">
+      <div style="flex:1">
+        <div class="options" id="options"></div>
+      </div>
+      <div style="width:220px">
+        <div class="small">Timer</div>
+        <div class="progress"><div id="timerFill" class="fill"></div></div>
+        <div class="small" style="margin-top:8px">Round <span id="round">1</span> / <span id="roundTotal">8</span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="nextBtn">Pular / Próxima</button>
+      <button class="ghost" id="hintBtn">Ouvir frase</button>
+      <button onclick="limpab()" class="ghost" id="resetBtn">Reiniciar</button>
+    </div>
+
+    <div class="statbar">
+      <div class="small">Progresso</div>
+      <div class="progress"><div id="prog" class="fill" style="width:0%"></div></div>
+      <div class="small" id="feedback">—</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* App-style fill-in game - multiple rounds & timer */
+const questions = [
+  {q:'I ___ to school every day.', opts:['go','goes','going','gone'], a:'go'},
+  {q:'She ___ coffee every morning.', opts:['drink','drinks','drinking','drunk'], a:'drinks'},
+  {q:'They ___ football on weekends.', opts:['plays','play','playing','played'], a:'play'},
+  {q:'He ___ a new phone yesterday.', opts:['buy','bought','buys','buying'], a:'bought'},
+  {q:'We ___ dinner at 7pm.', opts:['have','has','had','having'], a:'have'},
+  {q:'Do you ___ English?', opts:['speak','speaks','spoke','speaking'], a:'speak'},
+  {q:'I ___ never been to London.', opts:['have','has','had','having'], a:'have'},
+  {q:'She ___ not like cheese.', opts:["does","do","don't","didn't"], a:"don't"},
+  // more questions can be added...
+];
+
+let roundTotal = 8; // rounds per session (random picks)
+let picked = []; let round = 0;
+let score = 0; let streak = 0;
+let timerInterval = null;
+const roundTime = 14; // seconds
+
+// UI refs
+const qText = document.getElementById('qText');
+const optionsDiv = document.getElementById('options');
+const nextBtn = document.getElementById('nextBtn');
+const hintBtn = document.getElementById('hintBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreEl = document.getElementById('score');
+const streakEl = document.getElementById('streak');
+const progEl = document.getElementById('prog');
+const roundEl = document.getElementById('round');
+const roundTotalEl = document.getElementById('roundTotal');
+const feedback = document.getElementById('feedback');
+const timerFill = document.getElementById('timerFill');
+const toast = document.getElementById('toast');
+
+roundTotalEl.textContent = roundTotal;
+
+// util
+function showToast(t){ toast.textContent = t; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1600); }
+
+// pick next question
+function pickQuestion(){
+  if(picked.length >= roundTotal) { endSession(); return null; }
+  let unused = questions.filter((_,i)=>!picked.includes(i));
+  let idx = Math.floor(Math.random()*unused.length);
+  let qIdx = questions.indexOf(unused[idx]);
+  picked.push(qIdx);
+  return questions[qIdx];
+}
+
+// render
+function renderQuestion(){
+  clearTimer();
+  const item = pickQuestion();
+  if(!item) return;
+  round++;
+  roundEl.textContent = round;
+  qText.textContent = item.q;
+  optionsDiv.innerHTML='';
+  let opts = item.opts.slice().sort(()=>Math.random()-0.5);
+  opts.forEach(op=>{
+    const b = document.createElement('button');
+    b.className='opt';
+    b.textContent = op;
+    b.onclick = ()=>selectOption(b, item.a);
+    optionsDiv.appendChild(b);
+  });
+  startTimer(roundTime, ()=>{ // time over
+    feedback.textContent = '⏱ Tempo esgotado! A resposta era: ' + item.a;
+    streak = 0; updateScoreUI();
+    setTimeout(()=>renderQuestion(),900);
+  });
+ // updateProg();
+}
+
+// option clicked
+function selectOption(btn, correct){
+  disableOptions();
+  if(btn.textContent === correct){
+    btn.classList.add('correct');
+    score += 1 + Math.min(20, Math.floor(round*2));
+    streak++; feedback.textContent = '✔ Correto! +1';
+    speak(btn.textContent,'en-US');
+  } else {
+    btn.classList.add('wrong');
+    streak = 0;
+    feedback.textContent = '❌ Errado. Tente a próxima!';
+    // highlight correct one
+    Array.from(optionsDiv.children).forEach(c=>{ if(c.textContent===correct) c.classList.add('correct'); });
+    speak(correct,'en-US');
+  }
+  updateScoreUI();
+  setTimeout(()=>renderQuestion(),900);
+}
+
+function disableOptions(){ Array.from(optionsDiv.children).forEach(b=>b.disabled=true); }
+function enableOptions(){ Array.from(optionsDiv.children).forEach(b=>b.disabled=false); }
+
+function updateScoreUI(){
+  scoreEl.textContent = score;
+  streakEl.textContent = streak;
+  const pct = Math.round((picked.length/roundTotal)*100);
+  progEl.style.width = pct + '%';
+}
+
+// timer
+let timeLeft = 0;
+function startTimer(seconds, onEnd){
+  timeLeft = seconds; timerFill.style.width = '100%';
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    timerFill.style.width = (timeLeft/seconds*100) + '%';
+    if(timeLeft<=0){ clearTimer(); onEnd(); }
+  },1000);
+}
+function clearTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; timerFill.style.width='0%'; }
+
+function endSession(){
+  feedback.textContent = 'Sessão concluída! Pontos: ' + score;
+  showToast('Sessão finalizada — ' + score + ' pts');
+  // save best
+  const best = Number(localStorage.getItem('lf_fill_best')||0);
+  if(score>best){ localStorage.setItem('lf_fill_best',score); showToast('Novo record!'); }
+  // reset picks for new session
+  picked = []; round = 0;
+  // update UI
+  updateScoreUI();
+}
+//função limpa best
+function limpab() {
+  localStorage.removeItem("lf_fill_best");
+};
+
+// audio TTS
+function speak(text, lang='en-US'){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang; u.rate = 0.95;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// controls
+nextBtn.addEventListener('click', ()=> { feedback.textContent='Pulou.'; streak=0; updateScoreUI(); renderQuestion(); });
+hintBtn.addEventListener('click', ()=>{ // speak phrase
+  const p = qText.textContent;
+  speak(p,'en-US');
+});
+resetBtn.addEventListener('click', ()=>{ if(confirm('Reiniciar sessão?')){ picked=[]; round=0; score=0; streak=0; updateScoreUI(); renderQuestion(); } });
+
+/* init */
+(function init(){
+  // shuffle and start
+  picked = []; round=0; score = Number(localStorage.getItem('lf_fill_score') || 0);
+  streak = Number(localStorage.getItem('lf_fill_streak') || 0);
+  updateScoreUI();
+  renderQuestion();
+  // save periodically
+  setInterval(()=>{ localStorage.setItem('lf_fill_score', score); localStorage.setItem('lf_fill_streak', streak); },2000);
+})();
+</script>
+</body>
+</html>

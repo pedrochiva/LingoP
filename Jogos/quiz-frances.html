@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Quiz de Francês — LinguaFlow</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/nNvRR2T7/Polish-20251224-140917178.png">
+  
+<style>
+:root{--accent:#2648b6}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,#f6f8ff,#fff);color:#071133}
+.wrap{max-width:920px;margin:18px auto;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.h1{color:var(--accent);margin:0}
+.card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 12px 30px rgba(12,24,60,0.06)}
+.q{font-size:20px;margin-bottom:12px}
+.choices{display:grid;gap:10px}
+.choice{padding:12px;border-radius:10px;border:1px solid rgba(38,72,182,0.08);background:#f7fbff;color:var(--accent);font-weight:800;cursor:pointer}
+.choice.correct{background:#16a34a;color:#fff;border:0}
+.choice.wrong{background:#ef4444;color:#fff;border:0}
+.controls{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:800}
+.small{color:#6b7280;font-size:13px}
+.progress{height:12px;background:#eef4ff;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent);width:0%;transition:width .4s}
+.footer{margin-top:18px;color:#6b7280;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <div>
+      <h1 class="h1">Quiz de Francês</h1>
+      <div class="small">Perguntas em português com respostas em francês — vocabulário, frases e artigos.</div>
+    </div>
+    <div class="small">Pontuação: <strong id="score">0</strong></div>
+  </header>
+
+  <main class="card">
+    <div class="progress"><div id="bar" class="fill"></div></div>
+
+    <div class="q" id="qtext">Carregando...</div>
+    <div class="choices" id="choices"></div>
+
+    <div class="controls" style="margin-top:12px">
+      <div class="small">Questão <span id="index">0</span> / <span id="total">0</span></div>
+      <div style="flex:1"></div>
+      <button id="skip" class="btn">Pular</button>
+      <button id="restart" class="btn" style="background:#fff;color:var(--accent);border:1px solid rgba(38,72,182,0.12)">Reiniciar</button>
+    </div>
+
+    <div id="feedback" class="small" style="margin-top:10px"></div>
+  </main>
+
+  <div style="margin-top:12px"><a href="../jogos.html" style="color:var(--accent);text-decoration:none">⬅ Voltar aos Jogos</a></div>
+</div>
+
+<script>
+/* Perguntas (20) — prompts em português, respostas em francês */
+const QUESTIONS = [
+  {q:"Como se diz 'casa' em francês?", opts:["maison","porte","livre","chien"], a:"maison"},
+  {q:"Complete: 'Je ___ 12 ans.' (eu tenho 12 anos)", opts:["ai","est","as","avez"], a:"ai"},
+  {q:"Traduza 'Bom dia' (bonjour) — escolha:", opts:["Olá/Boa tarde","Bom dia","Adeus","Por favor"], a:"Bom dia"},
+  {q:"Qual artigo para 'fille' (menina)?", opts:["le","la","un","les"], a:"la"},
+  {q:"Como se diz 'obrigado' em francês?", opts:["merci","bonjour","s'il vous plaît","pardon"], a:"merci"},
+  {q:"Qual é o plural de 'cheval'?", opts:["chevals","chevaux","chevails","chevales"], a:"chevaux"},
+  {q:"Traduza: 'Onde fica a estação?'", opts:["Où est la gare?","Où sont les gare?","Où est le gare?","Où la gare est?"], a:"Où est la gare?"},
+  {q:"Complete: 'Nous ___ au marché.'", opts:["allons","va","vas","allez"], a:"allons"},
+  {q:"Como se diz 'livro' em francês?", opts:["livre","libro","book","livreau"], a:"livre"},
+  {q:"Escolha a tradução: 'Eu não entendi.'", opts:["Je n'ai pas compris.","Je n'ai pas comprendre.","Je ne comprends pas pas.","Je pas compris."], a:"Je n'ai pas compris."},
+  {q:"Qual artigo indefinido para 'pomme' (maçã)?", opts:["un","une","le","la"], a:"une"},
+  {q:"Traduza: 'Eu quero água.'", opts:["Je veux de l'eau.","Je veux l'eau.","Je veux eau.","Je veux de l'eau s'il vous plaît."], a:"Je veux de l'eau."},
+  {q:"Qual a forma correta: 'Elle ___ music.' (ela ama música)", opts:["aime","aimer","aimes","aimons"], a:"aime"},
+  {q:"Plural de 'ami' (amigo) é:", opts:["amis","amies","amix","amys"], a:"amis"},
+  {q:"Complete: 'Il ___ 30 ans.' (ele tem 30 anos)", opts:["a","est","as","ai"], a:"a"},
+  {q:"Escolha a tradução correta: 'I love you' →", opts:["Je t'aime","Je aime toi","Je te aime","Je vous aime"], a:"Je t'aime"},
+  {q:"Como se diz 'tchau' em francês?", opts:["au revoir","bonjour","s'il vous plaît","merci"], a:"au revoir"},
+  {q:"Traduza: 'Eu estou cansado.'", opts:["Je suis fatigué.","Je suis content.","Je suis malade.","Je suis calme."], a:"Je suis fatigué."},
+  {q:"Qual pronome para 'nosso' (nós) em francês antes de um substantivo?", opts:["notre/nos","leur","votre","mon"], a:"notre/nos"},
+  {q:"Qual a forma correta: 'Tu ___ bien.' (Tu ___ parle?)", opts:["parles","parle","parlent","parlez"], a:"parles"}
+];
+
+let order = QUESTIONS.map((_,i)=>i).sort(()=>Math.random()-0.5);
+let idx=0, score=0, total = order.length;
+document.getElementById('total').textContent = total;
+
+function render(){
+  if(idx >= total){ finish(); return; }
+  const item = QUESTIONS[order[idx]];
+  document.getElementById('qtext').textContent = item.q;
+  const choices = document.getElementById('choices'); choices.innerHTML = '';
+  item.opts.slice().sort(()=>Math.random()-0.5).forEach(opt=>{
+    const b = document.createElement('button'); b.className='choice'; b.textContent = opt;
+    b.onclick = ()=>select(b, item.a);
+    choices.appendChild(b);
+  });
+  document.getElementById('index').textContent = idx+1;
+  updateProgress();
+  document.getElementById('feedback').textContent = '';
+}
+
+function select(el, correct){
+  Array.from(document.querySelectorAll('.choice')).forEach(c=>c.onclick=null);
+  if(el.textContent === correct){
+    el.classList.add('correct'); speak(correct, 'fr-FR'); score += 10; document.getElementById('score').textContent = score;
+    document.getElementById('feedback').textContent = '✔ Correto!';
+  } else {
+    el.classList.add('wrong'); speak(correct, 'fr-FR'); document.getElementById('feedback').textContent = '❌ Errado — a resposta correta foi destacada.';
+    Array.from(document.querySelectorAll('.choice')).forEach(c=>{ if(c.textContent === correct) c.classList.add('correct'); });
+  }
+  setTimeout(()=>{ idx++; render(); },900);
+}
+
+document.getElementById('skip').addEventListener('click', ()=>{ idx++; if(idx>=total) finish(); else render(); });
+document.getElementById('restart').addEventListener('click', ()=>{ if(!confirm('Reiniciar quiz?')) return; idx=0; score=0; order = QUESTIONS.map((_,i)=>i).sort(()=>Math.random()-0.5); document.getElementById('score').textContent = score; render(); });
+
+function updateProgress(){
+  const pct = Math.round((idx/total)*100);
+  document.getElementById('bar').style.width = pct + '%';
+}
+
+/* TTS */
+function speak(text, lang='fr-FR'){
+  try{ const u = new SpeechSynthesisUtterance(text); u.lang = lang; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){}
+}
+
+/* finish -> salvar em localStorage */
+function finish(){
+  const key = 'lf_quiz_fr';
+  const prev = JSON.parse(localStorage.getItem(key) || 'null') || {best:0,last:null};
+  const last = score;
+  const best = Math.max(prev.best || 0, last);
+  localStorage.setItem(key, JSON.stringify({best,last}));
+  alert('Quiz finalizado! Pontos: ' + score);
+  idx=0; score=0; order = QUESTIONS.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  document.getElementById('score').textContent = score;
+  render();
+}
+
+/* init */
+(function(){ 
+  localStorage.setItem("quiz-fr",score)
+  document.getElementById('score').textContent = score; render(); })();
+</script>
+</body>
+</html>
